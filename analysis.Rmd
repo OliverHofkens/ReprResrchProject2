@@ -10,3 +10,46 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
+## Synopsis
+
+## Data Processing
+
+Download the data to 'data/StormData.csv.bz2' and load it into R.
+```{r}
+library(dplyr)
+
+if(!dir.exists("data")){
+    dir.create("data")
+}
+
+download.file("https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2", "data/StormData.csv.bz2")
+
+# Supplying the nrows and (empty) comment.char arguments reduces memory usage and speeds up the loading.
+stormData <- read.csv('data/StormData.csv.bz2', nrows = 902297, comment.char = "")
+```
+
+```{r}
+# Calculate actual costs (not K, M, B) of property damage and crop damage
+calculateCost <- function(cost, exp){
+    switch(toupper(as.character(exp)),
+            K = cost * 1000,
+            M = cost * 1000000,
+            B = cost * 1000000000,
+           NA
+           )
+}
+
+calculateCost <- Vectorize(calculateCost)
+
+stormData <- stormData %>% mutate(propertyDamage = calculateCost(PROPDMG, PROPDMGEXP), cropDamage = calculateCost(CROPDMG, CROPDMGEXP))
+```
+
+```{r}
+
+
+resultsGroupedByType <- stormData %>% group_by(EVTYPE) %>% summarise(fatalities = mean(fatalities), injuries = mean(INJURIES), propertyDamage = mean())
+```
+
+
+## Results
