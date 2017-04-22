@@ -1,0 +1,12 @@
+---
+title: "Analysis of Storm Damage across the US"
+author: "Oliver Hofkens"
+date: "22 April 2017"
+output: 
+    html_document:
+        keep_md: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
